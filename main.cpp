@@ -30,7 +30,7 @@ class Object {
             disp_char = c;
         }
         /*
-         *   Getter and setter for disp_char
+         *  Getter and setter for disp_char
          */
         char & ch() { return disp_char; }
         /*
