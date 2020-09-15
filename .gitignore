@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# Directories
+build
+
+# Terminal Font
+terminal.png
+
+# Makefiles
+
+makefile
