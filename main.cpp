@@ -15,7 +15,7 @@ class Map {
         std::map<Coordinates, Object> stage;
         int objCount;
     public:
-        bool checkObject(Coordinates coords) {
+        bool objectAt(Coordinates coords) {
             if (stage.count(coords) > 0) {
                 return true;   
             }
@@ -29,7 +29,7 @@ class Map {
         }
 
         bool addObject(std::tuple<int, int> coords, Object obj) {
-            if (!checkObject(coords)){
+            if (!objectAt(coords)){
                 stage[coords] = obj;
                 objCount++;
                 return true;
