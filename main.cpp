@@ -3,18 +3,57 @@
 #include <tuple>
 #include <iostream>
 
-class Object {
-    public:
-        char disp_char = '#';
-};
-
 typedef std::tuple<int, int> Coordinates;
+
+class Object {
+    private:
+        std::string id = "";
+        char disp_char = '#';
+        bool passable = false;
+
+        int x_ = 0;
+        int y_ = 0;
+    public:
+        /*
+         *  Default constructor 
+         *
+         *  @param none
+         */
+        Object() {
+            return;
+        }
+        /*
+         *  @param char, std::string
+         */
+        Object(char c, std::string name) {
+            id = name;
+            disp_char = c;
+        }
+        /*
+         *   Getter and setter for disp_char
+         */
+        char & ch() { return disp_char; }
+        /*
+         *  Getter and setter for disp_char
+         */
+        std::string & name() { return id; }
+        /*
+         *  X and Y coordinate getters and setters
+         */
+        int & x() { return x_; }
+        int & y() { return y_; }
+};
 
 class Map {
     private:
         std::map<Coordinates, Object> stage;
         int objCount;
     public:
+        /*   Return true if the specified location contains an object.
+         *   
+         *   @param Coordinates tuple
+         *   @return boolean, true if occupied
+         */
         bool objectAt(Coordinates coords) {
             if (stage.count(coords) > 0) {
                 return true;   
@@ -23,7 +62,9 @@ class Map {
                 return false;
             }
         }
-
+        /*
+         *  @param integer x and y coordinates
+         */
         bool objectAt(int x, int y) {
             Coordinates coords = std::tuple<int, int>(x, y);
             if (stage.count(coords) > 0) {
@@ -33,19 +74,33 @@ class Map {
                 return false;
             }
         }
-
+        /*
+         *  Return object at specified location
+         *
+         *  @param Coordinates tuple
+         *  @return Object
+         */
         Object fetchObject(Coordinates coords){
             return stage[coords];
         }
-
+        /*
+         *  @param integer x and y coordinates
+         */
         Object fetchObject(int x, int y){
             Coordinates coords = std::tuple<int, int>(x, y);
             return stage[coords];
         }
-
-        bool addObject(Coordinates coords, Object obj) {
+        /*
+         *  Add object to specific location. Fails if coordinates are occupied.
+         *
+         *  @param Coordinates tuple, Object
+         *  @return boolean, true if addition successful
+         */
+        bool addObject(Coordinates coords, Object * obj) {
             if (!objectAt(coords)){
-                stage[coords] = obj;
+                stage[coords] = *obj;
+                obj->x() = std::get<1>(coords);
+                obj->y() = std::get<0>(coords);
                 objCount++;
                 return true;
             }
@@ -53,11 +108,15 @@ class Map {
                 return false;
             }
         }
-
-        bool addObject(int x, int y, Object obj) {
+        /*
+         *  @param integer x and y coordinates
+         */
+        bool addObject(int x, int y, Object * obj) {
             Coordinates coords = std::tuple<int, int>(x, y);
             if (!objectAt(coords)){
-                stage[coords] = obj;
+                stage[coords] = *obj; 
+                obj->x() = x;
+                obj->y() = y;
                 objCount++;
                 return true;
             }
@@ -65,25 +124,36 @@ class Map {
                 return false;
             }
         }
-
+        /*
+         *  Draws stage to console naively. Iterates through every Object located in Map and places it
+         *  in the console for display.
+         *  
+         *  @param none
+         *  @return void
+         */
         void drawStage() {
             for (std::map<Coordinates, Object>::iterator mapIt = stage.begin();
                  mapIt != stage.end(); 
                  mapIt++) {
-                TCODConsole::root->putChar(std::get<1>(mapIt->first),
-                                           std::get<0>(mapIt->first), 
-                                           mapIt->second.disp_char);
+                TCODConsole::root->putChar(std::get<0>(mapIt->first),
+                                           std::get<1>(mapIt->first), 
+                                           mapIt->second.ch());
             }
         }
 };
 
 int main() {
-    int player_x = 40;
-    int player_y = 25;
+    int player_x = 3;
+    int player_y = 4;
     
-    Object rock;
+    Object * rock  = new Object('#', "rock wall");
+    Object * stick = new Object('/', "stick");
+    
     Map newMap;
+    
+    newMap.addObject(5, 3, stick);
 
+    std::cout << "Stick X: " << stick->x() << " Y: " << stick->y() << std::endl;
     newMap.addObject(1, 1, rock);
     newMap.addObject(1, 2, rock);
     newMap.addObject(1, 3, rock);
@@ -102,12 +172,19 @@ int main() {
     newMap.addObject(std::tuple<int, int>(6,1), rock);
     newMap.addObject(std::tuple<int, int>(6,2), rock);
     newMap.addObject(std::tuple<int, int>(6,3), rock);
-    newMap.addObject(std::tuple<int, int>(6,4), rock);
     newMap.addObject(std::tuple<int, int>(6,5), rock);
     newMap.addObject(std::tuple<int, int>(6,6), rock);
     newMap.addObject(std::tuple<int, int>(6,7), rock);
-
-    newMap.drawStage();
+    newMap.addObject(std::tuple<int, int>(7,3), rock);
+    newMap.addObject(std::tuple<int, int>(7,5), rock);
+    newMap.addObject(std::tuple<int, int>(8,3), rock);
+    newMap.addObject(std::tuple<int, int>(8,5), rock);
+    newMap.addObject(std::tuple<int, int>(9,3), rock);
+    newMap.addObject(std::tuple<int, int>(10,3), rock);
+    newMap.addObject(std::tuple<int, int>(11,3), rock);
+    newMap.addObject(std::tuple<int, int>(9,5), rock);
+    newMap.addObject(std::tuple<int, int>(10,5), rock);
+    newMap.addObject(std::tuple<int, int>(11,5), rock);
 
     TCODConsole::initRoot(80, 50, "vigilant-waddle", false);
 
