@@ -80,13 +80,13 @@ class Map {
          *  @param Coordinates tuple
          *  @return Object
          */
-        Object fetchObject(Coordinates coords){
+        Object fetchObject(Coordinates coords) {
             return stage[coords];
         }
         /*
          *  @param integer x and y coordinates
          */
-        Object fetchObjectAt(int x, int y){
+        Object fetchObjectAt(int x, int y) {
             Coordinates coords = std::tuple<int, int>(x, y);
             return stage[coords];
         }
@@ -97,7 +97,7 @@ class Map {
          *  @return boolean, true if addition successful
          */
         bool addObjectAt(Object * obj, Coordinates coords) {
-            if (!isObjectAt(coords)){
+            if (!isObjectAt(coords)) {
                 stage[coords] = *obj;
                 obj->x() = std::get<1>(coords);
                 obj->y() = std::get<0>(coords);
@@ -113,7 +113,7 @@ class Map {
          */
         bool addObjectAt(Object * obj, int x, int y) {
             Coordinates coords = std::tuple<int, int>(x, y);
-            if (!isObjectAt(coords)){
+            if (!isObjectAt(coords)) {
                 stage[coords] = *obj; 
                 obj->x() = x;
                 obj->y() = y;
