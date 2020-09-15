@@ -54,7 +54,7 @@ class Map {
          *   @param Coordinates tuple
          *   @return boolean, true if occupied
          */
-        bool objectAt(Coordinates coords) {
+        bool isObjectAt(Coordinates coords) {
             if (stage.count(coords) > 0) {
                 return true;   
             }
@@ -65,7 +65,7 @@ class Map {
         /*
          *  @param integer x and y coordinates
          */
-        bool objectAt(int x, int y) {
+        bool isObjectAt(int x, int y) {
             Coordinates coords = std::tuple<int, int>(x, y);
             if (stage.count(coords) > 0) {
                 return true;   
@@ -86,7 +86,7 @@ class Map {
         /*
          *  @param integer x and y coordinates
          */
-        Object fetchObject(int x, int y){
+        Object fetchObjectAt(int x, int y){
             Coordinates coords = std::tuple<int, int>(x, y);
             return stage[coords];
         }
@@ -96,8 +96,8 @@ class Map {
          *  @param Coordinates tuple, Object
          *  @return boolean, true if addition successful
          */
-        bool addObject(Coordinates coords, Object * obj) {
-            if (!objectAt(coords)){
+        bool addObjectAt(Object * obj, Coordinates coords) {
+            if (!isObjectAt(coords)){
                 stage[coords] = *obj;
                 obj->x() = std::get<1>(coords);
                 obj->y() = std::get<0>(coords);
@@ -111,9 +111,9 @@ class Map {
         /*
          *  @param integer x and y coordinates
          */
-        bool addObject(int x, int y, Object * obj) {
+        bool addObjectAt(Object * obj, int x, int y) {
             Coordinates coords = std::tuple<int, int>(x, y);
-            if (!objectAt(coords)){
+            if (!isObjectAt(coords)){
                 stage[coords] = *obj; 
                 obj->x() = x;
                 obj->y() = y;
@@ -151,40 +151,40 @@ int main() {
     
     Map newMap;
     
-    newMap.addObject(5, 3, stick);
+    newMap.addObjectAt(stick, 5, 3);
 
     std::cout << "Stick X: " << stick->x() << " Y: " << stick->y() << std::endl;
-    newMap.addObject(1, 1, rock);
-    newMap.addObject(1, 2, rock);
-    newMap.addObject(1, 3, rock);
-    newMap.addObject(1, 4, rock);
-    newMap.addObject(std::tuple<int, int>(1,5), rock);
-    newMap.addObject(std::tuple<int, int>(1,6), rock);
-    newMap.addObject(std::tuple<int, int>(1,7), rock);
-    newMap.addObject(std::tuple<int, int>(2,1), rock);
-    newMap.addObject(std::tuple<int, int>(3,1), rock);
-    newMap.addObject(std::tuple<int, int>(4,1), rock);
-    newMap.addObject(std::tuple<int, int>(5,1), rock);
-    newMap.addObject(std::tuple<int, int>(2,7), rock);
-    newMap.addObject(std::tuple<int, int>(3,7), rock);
-    newMap.addObject(std::tuple<int, int>(4,7), rock);
-    newMap.addObject(std::tuple<int, int>(5,7), rock);
-    newMap.addObject(std::tuple<int, int>(6,1), rock);
-    newMap.addObject(std::tuple<int, int>(6,2), rock);
-    newMap.addObject(std::tuple<int, int>(6,3), rock);
-    newMap.addObject(std::tuple<int, int>(6,5), rock);
-    newMap.addObject(std::tuple<int, int>(6,6), rock);
-    newMap.addObject(std::tuple<int, int>(6,7), rock);
-    newMap.addObject(std::tuple<int, int>(7,3), rock);
-    newMap.addObject(std::tuple<int, int>(7,5), rock);
-    newMap.addObject(std::tuple<int, int>(8,3), rock);
-    newMap.addObject(std::tuple<int, int>(8,5), rock);
-    newMap.addObject(std::tuple<int, int>(9,3), rock);
-    newMap.addObject(std::tuple<int, int>(10,3), rock);
-    newMap.addObject(std::tuple<int, int>(11,3), rock);
-    newMap.addObject(std::tuple<int, int>(9,5), rock);
-    newMap.addObject(std::tuple<int, int>(10,5), rock);
-    newMap.addObject(std::tuple<int, int>(11,5), rock);
+    newMap.addObjectAt(rock, 1, 1);
+    newMap.addObjectAt(rock, 1, 2);
+    newMap.addObjectAt(rock, 1, 3);
+    newMap.addObjectAt(rock, 1, 4);
+    newMap.addObjectAt(rock, std::tuple<int, int>(1,5));
+    newMap.addObjectAt(rock, std::tuple<int, int>(1,6));
+    newMap.addObjectAt(rock, std::tuple<int, int>(1,7));
+    newMap.addObjectAt(rock, std::tuple<int, int>(2,1));
+    newMap.addObjectAt(rock, std::tuple<int, int>(3,1));
+    newMap.addObjectAt(rock, std::tuple<int, int>(4,1));
+    newMap.addObjectAt(rock, std::tuple<int, int>(5,1));
+    newMap.addObjectAt(rock, std::tuple<int, int>(2,7));
+    newMap.addObjectAt(rock, std::tuple<int, int>(3,7));
+    newMap.addObjectAt(rock, std::tuple<int, int>(4,7));
+    newMap.addObjectAt(rock, std::tuple<int, int>(5,7));
+    newMap.addObjectAt(rock, std::tuple<int, int>(6,1));
+    newMap.addObjectAt(rock, std::tuple<int, int>(6,2));
+    newMap.addObjectAt(rock, std::tuple<int, int>(6,3));
+    newMap.addObjectAt(rock, std::tuple<int, int>(6,5));
+    newMap.addObjectAt(rock, std::tuple<int, int>(6,6));
+    newMap.addObjectAt(rock, std::tuple<int, int>(6,7));
+    newMap.addObjectAt(rock, std::tuple<int, int>(7,3));
+    newMap.addObjectAt(rock, std::tuple<int, int>(7,5));
+    newMap.addObjectAt(rock, std::tuple<int, int>(8,3));
+    newMap.addObjectAt(rock, std::tuple<int, int>(8,5));
+    newMap.addObjectAt(rock, std::tuple<int, int>(9,3));
+    newMap.addObjectAt(rock, std::tuple<int, int>(10,3));
+    newMap.addObjectAt(rock, std::tuple<int, int>(11,3));
+    newMap.addObjectAt(rock, std::tuple<int, int>(9,5));
+    newMap.addObjectAt(rock, std::tuple<int, int>(10,5));
+    newMap.addObjectAt(rock, std::tuple<int, int>(11,5));
 
     TCODConsole::initRoot(80, 50, "vigilant-waddle", false);
 
