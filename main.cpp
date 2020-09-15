@@ -10,161 +10,25 @@
 #include <libtcod.hpp>
 
 // local
-// #include "map_or_something.cpp"
+#include "object.hpp"
+#include "map.hpp"
 
-typedef std::tuple<int, int> Coordinates;
-
-class Object {
-    private:
-        std::string id = "";
-        char disp_char = '#';
-        bool passable = false;
-
-        int x_ = 0;
-        int y_ = 0;
-    public:
-        /*
-         *  Default constructor 
-         *
-         *  @param none
-         */
-        Object() {
-            return;
-        }
-        /*
-         *  @param char, std::string
-         */
-        Object(char c, std::string name) {
-            id = name;
-            disp_char = c;
-        }
-        /*
-         *  Getter and setter for disp_char
-         */
-        char & ch() { return disp_char; }
-        /*
-         *  Getter and setter for disp_char
-         */
-        std::string & name() { return id; }
-        /*
-         *  X and Y coordinate getters and setters
-         */
-        int & x() { return x_; }
-        int & y() { return y_; }
-};
-
-class Map {
-    private:
-        std::map<Coordinates, Object> stage;
-        int objCount;
-    public:
-        /*   Return true if the specified location contains an object.
-         *   
-         *   @param Coordinates tuple
-         *   @return boolean, true if occupied
-         */
-        bool isObjectAt(Coordinates coords) {
-            if (stage.count(coords) > 0) {
-                return true;   
-            }
-            else {
-                return false;
-            }
-        }
-        /*
-         *  @param integer x and y coordinates
-         */
-        bool isObjectAt(int x, int y) {
-            Coordinates coords = std::tuple<int, int>(x, y);
-            if (stage.count(coords) > 0) {
-                return true;   
-            }
-            else {
-                return false;
-            }
-        }
-        /*
-         *  Return object at specified location
-         *
-         *  @param Coordinates tuple
-         *  @return Object
-         */
-        Object fetchObject(Coordinates coords) {
-            return stage[coords];
-        }
-        /*
-         *  @param integer x and y coordinates
-         */
-        Object fetchObjectAt(int x, int y) {
-            Coordinates coords = std::tuple<int, int>(x, y);
-            return stage[coords];
-        }
-        /*
-         *  Add object to specific location. Fails if coordinates are occupied.
-         *
-         *  @param Coordinates tuple, Object
-         *  @return boolean, true if addition successful
-         */
-        bool addObjectAt(Object * obj, Coordinates coords) {
-            if (!isObjectAt(coords)) {
-                stage[coords] = *obj;
-                obj->x() = std::get<1>(coords);
-                obj->y() = std::get<0>(coords);
-                objCount++;
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        /*
-         *  @param integer x and y coordinates
-         */
-        bool addObjectAt(Object * obj, int x, int y) {
-            Coordinates coords = std::tuple<int, int>(x, y);
-            if (!isObjectAt(coords)) {
-                stage[coords] = *obj; 
-                obj->x() = x;
-                obj->y() = y;
-                objCount++;
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        /*
-         *  Draws stage to console naively. Iterates through every Object located in Map and places it
-         *  in the console for display.
-         *  
-         *  @param none
-         *  @return void
-         */
-        void drawStage() {
-            for (std::map<Coordinates, Object>::iterator mapIt = stage.begin();
-                 mapIt != stage.end(); 
-                 mapIt++) {
-                TCODConsole::root->putChar(std::get<0>(mapIt->first),
-                                           std::get<1>(mapIt->first), 
-                                           mapIt->second.ch());
-            }
-        }
-};
+typedef std::tuple<int, int> map::Coordinates;
 
 /*
- *  Renders a test Map, returning the Map and the player Coordinates
+ *  Renders a test map::Map, returning the map::Map and the player map::Coordinates
  *  
  *  @param none
- *  @return std::tuple<Map, Coordinates>
+ *  @return std::tuple<map::Map, map::Coordinates>
  */
-std::tuple<Map, Coordinates> renderTestMap() {
-    Object * wall  = new Object('#', "rock wall");
-    Object * floor = new Object('.', "wall floor");
-    Object * stick = new Object('/', "stick");
+std::tuple<map::Map, map::Coordinates> renderTestMap() {
+    object::Object * wall  = new object::Object('#', "rock wall");
+    object::Object * floor = new object::Object('.', "wall floor");
+    object::Object * stick = new object::Object('/', "stick");
     int player_x = 3;
     int player_y = 4;
     
-    Map newMap;
+    map::Map newMap;
     
     newMap.addObjectAt(stick, 5, 3);
 
@@ -236,22 +100,22 @@ std::tuple<int, int> getMaxDimensions(std::string filename) {
 }
 
 /*
- *  Load a map from a file, render it to a Map, and return that Map and the 
- *  player Coordinates
+ *  Load a map from a file, render it to a map::Map, and return that map::Map and the 
+ *  player map::Coordinates
  * 
  *  If a player was found, the last player's coordinates are returned. If no
  *  player was found, (0,0) are returned as the player coordinates.
  *
  *  @param std::string
  */
-std::tuple<Map, Coordinates> loadMap(std::string filename) {
-    Object * wall  = new Object('#', "rock wall");
-    Object * floor = new Object('.', "wall floor");
-    Object * stick = new Object('/', "stick");
+std::tuple<map::Map, map::Coordinates> loadMap(std::string filename) {
+    object::Object * wall  = new object::Object('#', "rock wall");
+    object::Object * floor = new object::Object('.', "wall floor");
+    object::Object * stick = new object::Object('/', "stick");
     int player_x = 0;
     int player_y = 0;
     
-    Map newMap;
+    map::Map newMap;
     
     std::ifstream ifs { filename };
     
@@ -316,7 +180,7 @@ std::tuple<Map, Coordinates> loadMap(std::string filename) {
 }
 
 int main() {
-    Map newMap; 
+    map::Map newMap; 
     int player_x, player_y;
     
     //auto ret = renderTestMap();
