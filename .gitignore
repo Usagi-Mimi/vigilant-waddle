@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# Kate tmp files
+*.kate-swp
+
 # Directories
 build
 
