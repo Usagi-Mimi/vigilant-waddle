@@ -24,16 +24,44 @@ class Map {
             }
         }
 
-        Object fetchObject(Coordinates coords){
-                return stage[coords];
+        bool objectAt(int x, int y) {
+            Coordinates coords = std::tuple<int, int>(x, y);
+            if (stage.count(coords) > 0) {
+                return true;   
+            }
+            else {
+                return false;
+            }
         }
 
-        bool addObject(std::tuple<int, int> coords, Object obj) {
+        Object fetchObject(Coordinates coords){
+            return stage[coords];
+        }
+
+        Object fetchObject(int x, int y){
+            Coordinates coords = std::tuple<int, int>(x, y);
+            return stage[coords];
+        }
+
+        bool addObject(Coordinates coords, Object obj) {
             if (!objectAt(coords)){
                 stage[coords] = obj;
                 objCount++;
                 return true;
-            } else {
+            }
+            else {
+                return false;
+            }
+        }
+
+        bool addObject(int x, int y, Object obj) {
+            Coordinates coords = std::tuple<int, int>(x, y);
+            if (!objectAt(coords)){
+                stage[coords] = obj;
+                objCount++;
+                return true;
+            }
+            else {
                 return false;
             }
         }
@@ -42,7 +70,9 @@ class Map {
             for (std::map<Coordinates, Object>::iterator mapIt = stage.begin();
                  mapIt != stage.end(); 
                  mapIt++) {
-                TCODConsole::root->putChar(std::get<1>(mapIt->first),std::get<0>(mapIt->first), mapIt->second.disp_char);
+                TCODConsole::root->putChar(std::get<1>(mapIt->first),
+                                           std::get<0>(mapIt->first), 
+                                           mapIt->second.disp_char);
             }
         }
 };
@@ -54,10 +84,10 @@ int main() {
     Object rock;
     Map newMap;
 
-    newMap.addObject(std::tuple<int, int>(1,1), rock);
-    newMap.addObject(std::tuple<int, int>(1,2), rock);
-    newMap.addObject(std::tuple<int, int>(1,3), rock);
-    newMap.addObject(std::tuple<int, int>(1,4), rock);
+    newMap.addObject(1, 1, rock);
+    newMap.addObject(1, 2, rock);
+    newMap.addObject(1, 3, rock);
+    newMap.addObject(1, 4, rock);
     newMap.addObject(std::tuple<int, int>(1,5), rock);
     newMap.addObject(std::tuple<int, int>(1,6), rock);
     newMap.addObject(std::tuple<int, int>(1,7), rock);
