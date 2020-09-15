@@ -31,12 +31,9 @@
 *.out
 *.app
 
-<<<<<<< HEAD
-=======
 # Kate tmp files
 *.kate-swp
 
->>>>>>> f54bfb03d14eacbeb087714fdf97917cce0fee16
 # Directories
 build
 
@@ -44,8 +41,4 @@ build
 terminal.png
 
 # Makefiles
-<<<<<<< HEAD
-
-=======
->>>>>>> f54bfb03d14eacbeb087714fdf97917cce0fee16
 makefile
