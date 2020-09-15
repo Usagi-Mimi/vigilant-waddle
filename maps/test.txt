@@ -1,0 +1,16 @@
+// A test map!
+// Lines beginning with "//" (or empty lines) are ignored.
+
+// E.g.,
+// ####
+// #..#
+// ####
+// won't show up.
+
+######
+#....#
+#.../######
+#..@.......
+#....######
+#....#
+######
