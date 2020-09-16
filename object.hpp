@@ -1,9 +1,35 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <set>
 
-#include "component.hpp"
-#include "event.hpp"
+enum Component {
+    physics, // can take damage, has hp, etc.
+    sentient, // can be talked to, has pathfinding if not sessile, etc.
+};
+
+enum EventKind {
+    take_damage,
+    heal,
+    move_to,
+};
+
+class Event {
+    private:
+        EventKind kind;
+        std::string modifier;
+        unsigned int amount;
+
+    public:
+        Event(
+            EventKind k,
+            std::string t,
+            unsigned int a
+        );
+        EventKind getKind();
+        std::string getType();
+        unsigned int getAmount();
+};
 
 class Object {
     private:
@@ -13,10 +39,10 @@ class Object {
 
         int x_;
         int y_;
-        
+
         unsigned int hp_;
-        
-        std::vector<component::Component> components;
+
+        std::set<Component> components;
     public:
         Object();
         Object(char c, std::string name);
@@ -25,5 +51,5 @@ class Object {
         int & x();
         int & y();
         unsigned int & hp();
-        void getEvent(event::Event e);
+        void getEvent(Event e);
 };

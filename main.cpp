@@ -1,5 +1,4 @@
 // std
-#include <map>
 #include <tuple>
 #include <iostream>
 #include <fstream>
@@ -13,23 +12,21 @@
 #include "object.hpp"
 #include "map.hpp"
 
-typedef std::tuple<int, int> map::Coordinates;
-
 /*
- *  Renders a test map::Map, returning the map::Map and the player map::Coordinates
- *  
+ *  Renders a test Map::Map, returning the Map::Map and the player std::tuple<int, int>
+ *
  *  @param none
- *  @return std::tuple<map::Map, map::Coordinates>
+ *  @return std::tuple<Map::Map, std::tuple<int, int>>
  */
-std::tuple<map::Map, map::Coordinates> renderTestMap() {
-    object::Object * wall  = new object::Object('#', "rock wall");
-    object::Object * floor = new object::Object('.', "wall floor");
-    object::Object * stick = new object::Object('/', "stick");
+std::tuple<Map::Map, std::tuple<int, int>> renderTestMap() {
+    Object::Object * wall  = new Object::Object('#', "rock wall");
+    Object::Object * floor = new Object::Object('.', "wall floor");
+    Object::Object * stick = new Object::Object('/', "stick");
     int player_x = 3;
     int player_y = 4;
-    
-    map::Map newMap;
-    
+
+    Map::Map newMap;
+
     newMap.addObjectAt(stick, 5, 3);
 
     std::cout << "Stick X: " << stick->x() << " Y: " << stick->y() << std::endl;
@@ -66,15 +63,15 @@ std::tuple<map::Map, map::Coordinates> renderTestMap() {
     newMap.addObjectAt(wall, std::tuple<int, int>(11,5));
 
     TCODConsole::initRoot(80, 50, "vigilant-waddle", false);
-    
+
     return {
-        newMap, 
+        newMap,
         std::make_tuple(player_x, player_y)
     };
 }
 
 /*
- *  Load a map from a file-enclose and return its maximum x, y dimensions as 
+ *  Load a Map from a file-enclose and return its maximum x, y dimensions as
  *  a std::tuple, skipping empty lines or lines beginning with "//"
  *
  *  @param std::string
@@ -83,10 +80,10 @@ std::tuple<int, int> getMaxDimensions(std::string filename) {
     int max_x = 0;
     int max_y = 0;
     std::ifstream ifs { filename };
-    
+
     while (ifs) {
         std::string currentLine;
-        
+
         std::getline(ifs, currentLine);
         if (currentLine.length() > 0 && currentLine.substr(0, 2) != "//") {
             if (max_x < currentLine.length()) {
@@ -95,52 +92,52 @@ std::tuple<int, int> getMaxDimensions(std::string filename) {
             max_y++;
         }
     }
-    
+
     return std::make_tuple(max_x, max_y);
 }
 
 /*
- *  Load a map from a file, render it to a map::Map, and return that map::Map and the 
- *  player map::Coordinates
- * 
+ *  Load a Map from a file, render it to a Map::Map, and return that Map::Map and the
+ *  player std::tuple<int, int>
+ *
  *  If a player was found, the last player's coordinates are returned. If no
  *  player was found, (0,0) are returned as the player coordinates.
  *
  *  @param std::string
  */
-std::tuple<map::Map, map::Coordinates> loadMap(std::string filename) {
-    object::Object * wall  = new object::Object('#', "rock wall");
-    object::Object * floor = new object::Object('.', "wall floor");
-    object::Object * stick = new object::Object('/', "stick");
+std::tuple<Map::Map, std::tuple<int, int>> loadMap(std::string filename) {
+    Object::Object * wall  = new Object::Object('#', "rock wall");
+    Object::Object * floor = new Object::Object('.', "wall floor");
+    Object::Object * stick = new Object::Object('/', "stick");
     int player_x = 0;
     int player_y = 0;
-    
-    map::Map newMap;
-    
+
+    Map::Map newMap;
+
     std::ifstream ifs { filename };
-    
+
     if (!ifs) {
         std::cerr << "loadMap.cpp: Could not open \"" << filename << "\"!" << std::endl;
         exit(EXIT_FAILURE);
     }
-    
+
     auto max_dimensions = getMaxDimensions(filename);
     int max_x = std::get<0>(max_dimensions);
     int max_y = std::get<1>(max_dimensions);
-    
+
     if (max_x <= 0 || max_y <= 0) {
-        std::cerr << "loadMap.cpp: Invalid map \"" << filename << "\"!" << std::endl;
+        std::cerr << "loadMap.cpp: Invalid Map \"" << filename << "\"!" << std::endl;
         exit(EXIT_FAILURE);
     }
-    
+
     TCODConsole::initRoot(max_x, max_y, "vigilant-waddle", false);
-    
+
     int curr_x = 0;
     int curr_y = 0;
-        
+
     while (ifs) {
         std::string currentLine;
-        
+
         std::getline(ifs, currentLine);
         // Skip lines that are empty or begin with "//"
         if (currentLine.substr(0, 2) == "//") {
@@ -172,45 +169,45 @@ std::tuple<map::Map, map::Coordinates> loadMap(std::string filename) {
             curr_y++;
         }
     }
-    
+
     return {
-        newMap, 
+        newMap,
         std::make_tuple(player_x, player_y)
     };
 }
 
 int main() {
-    map::Map newMap; 
+    Map::Map newMap;
     int player_x, player_y;
-    
+
     //auto ret = renderTestMap();
-    auto ret = loadMap("./maps/test.txt");
-    
+    auto ret = loadMap("./Maps/test.txt");
+
     newMap = std::get<0>(ret);
     player_x = std::get<0>(std::get<1>(ret));
     player_y = std::get<1>(std::get<1>(ret));
 
-    while ( !TCODConsole::isWindowClosed() ) {   
+    while ( !TCODConsole::isWindowClosed() ) {
         // Handle key input
         TCOD_key_t key;
-        
+
         TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &key, NULL);
         switch (key.vk) {
             case TCODK_UP:
             case TCODK_KP8:
-                player_y--; 
+                player_y--;
                 break;
             case TCODK_DOWN:
             case TCODK_KP2:
-                player_y++; 
+                player_y++;
                 break;
             case TCODK_LEFT:
             case TCODK_KP4:
-                player_x--; 
+                player_x--;
                 break;
-            case TCODK_RIGHT: 
+            case TCODK_RIGHT:
             case TCODK_KP6:
-                player_x++; 
+                player_x++;
                 break;
             case TCODK_KP7:
                 player_x--;
@@ -230,14 +227,14 @@ int main() {
                 break;
             default: break;
         }
-        
+
         // Clear and rebuild scene >w<
-        TCODConsole::root->clear(); 
+        TCODConsole::root->clear();
         newMap.drawStage();
         TCODConsole::root->putChar(player_x, player_y, '@');
         // Render scene to window @w@
         TCODConsole::flush();
     }
-    
+
     return 0;
 }

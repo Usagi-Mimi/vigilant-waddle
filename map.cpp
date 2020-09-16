@@ -1,8 +1,9 @@
-#include "object.hpp"
 #include "map.hpp"
-bool map::isObjectAt(map::Coordinates coords) {
+#include "object.hpp"
+
+bool Map::isObjectAt(std::tuple<int, int> coords) {
     if (stage.count(coords) > 0) {
-        return true;   
+        return true;
     }
     else {
         return false;
@@ -12,10 +13,10 @@ bool map::isObjectAt(map::Coordinates coords) {
 /*
  *  @param integer x and y coordinates
  */
-bool map::isObjectAt(int x, int y) {
-    map::Coordinates coords = std::tuple<int, int>(x, y);
+bool Map::isObjectAt(int x, int y) {
+    std::tuple<int, int> coords = std::tuple<int, int>(x, y);
     if (stage.count(coords) > 0) {
-        return true;   
+        return true;
     }
     else {
         return false;
@@ -25,28 +26,28 @@ bool map::isObjectAt(int x, int y) {
 /*
  *  Return object at specified location
  *
- *  @param map::Coordinates tuple
+ *  @param std::tuple<int, int> tuple
  *  @return object::Object
  */
-object::Object map::fetchObject(map::Coordinates coords) {
+object::Object Map::fetchObject(std::tuple<int, int> coords) {
     return stage[coords];
 }
 
 /*
  *  @param integer x and y coordinates
  */
-object::Object map::fetchObjectAt(int x, int y) {
-    map::Coordinates coords = std::tuple<int, int>(x, y);
+object::Object Map::fetchObjectAt(int x, int y) {
+    std::tuple<int, int> coords = std::tuple<int, int>(x, y);
     return stage[coords];
 }
 
 /*
  *  Add object to specific location. Fails if coordinates are occupied.
  *
- *  @param map::Coordinates tuple, object::Object
+ *  @param std::tuple<int, int> tuple, object::Object
  *  @return boolean, true if addition successful
  */
-bool map::addObjectAt(object::Object * obj, map::Coordinates coords) {
+bool Map::addObjectAt(object::Object * obj, std::tuple<int, int> coords) {
     if (!isObjectAt(coords)) {
         stage[coords] = *obj;
         obj->x() = std::get<1>(coords);
@@ -62,10 +63,10 @@ bool map::addObjectAt(object::Object * obj, map::Coordinates coords) {
 /*
  *  @param integer x and y coordinates
  */
-bool map::addObjectAt(object::Object * obj, int x, int y) {
-    map::Coordinates coords = std::tuple<int, int>(x, y);
+bool Map::addObjectAt(object::Object * obj, int x, int y) {
+    std::tuple<int, int> coords = std::tuple<int, int>(x, y);
     if (!isObjectAt(coords)) {
-        stage[coords] = *obj; 
+        stage[coords] = *obj;
         obj->x() = x;
         obj->y() = y;
         objCount++;
@@ -79,17 +80,16 @@ bool map::addObjectAt(object::Object * obj, int x, int y) {
 /*
  *  Draws stage to console naively. Iterates through every object::Object located in Map and places it
  *  in the console for display.
- *  
+ *
  *  @param none
  *  @return void
  */
-void map::drawStage() {
-    for (std::map<map::Coordinates, object::Object>::iterator mapIt = stage.begin();
-            mapIt != stage.end(); 
+void Map::drawStage() {
+    for (std::map<std::tuple<int, int>, object::Object>::iterator mapIt = stage.begin();
+            mapIt != stage.end();
             mapIt++) {
         TCODConsole::root->putChar(std::get<0>(mapIt->first),
-                                    std::get<1>(mapIt->first), 
+                                    std::get<1>(mapIt->first),
                                     mapIt->second.ch());
     }
 }
-};
