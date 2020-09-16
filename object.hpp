@@ -21,13 +21,9 @@ class Event {
         unsigned int amount;
 
     public:
-        Event(
-            EventKind k,
-            std::string t,
-            unsigned int a
-        );
+        Event(EventKind k, std::string m, unsigned int a);
         EventKind getKind();
-        std::string getType();
+        std::string getModifier();
         unsigned int getAmount();
 };
 
@@ -51,5 +47,5 @@ class Object {
         int & x();
         int & y();
         unsigned int & hp();
-        void getEvent(Event e);
+        void handleEvent(Event e);
 };

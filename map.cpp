@@ -1,3 +1,5 @@
+#include <libtcod.hpp>
+
 #include "map.hpp"
 #include "object.hpp"
 
@@ -27,16 +29,16 @@ bool Map::isObjectAt(int x, int y) {
  *  Return object at specified location
  *
  *  @param std::tuple<int, int> tuple
- *  @return object::Object
+ *  @return Object
  */
-object::Object Map::fetchObject(std::tuple<int, int> coords) {
+Object Map::fetchObject(std::tuple<int, int> coords) {
     return stage[coords];
 }
 
 /*
  *  @param integer x and y coordinates
  */
-object::Object Map::fetchObjectAt(int x, int y) {
+Object Map::fetchObjectAt(int x, int y) {
     std::tuple<int, int> coords = std::tuple<int, int>(x, y);
     return stage[coords];
 }
@@ -44,10 +46,10 @@ object::Object Map::fetchObjectAt(int x, int y) {
 /*
  *  Add object to specific location. Fails if coordinates are occupied.
  *
- *  @param std::tuple<int, int> tuple, object::Object
+ *  @param std::tuple<int, int> tuple, Object
  *  @return boolean, true if addition successful
  */
-bool Map::addObjectAt(object::Object * obj, std::tuple<int, int> coords) {
+bool Map::addObjectAt(Object * obj, std::tuple<int, int> coords) {
     if (!isObjectAt(coords)) {
         stage[coords] = *obj;
         obj->x() = std::get<1>(coords);
@@ -63,7 +65,7 @@ bool Map::addObjectAt(object::Object * obj, std::tuple<int, int> coords) {
 /*
  *  @param integer x and y coordinates
  */
-bool Map::addObjectAt(object::Object * obj, int x, int y) {
+bool Map::addObjectAt(Object * obj, int x, int y) {
     std::tuple<int, int> coords = std::tuple<int, int>(x, y);
     if (!isObjectAt(coords)) {
         stage[coords] = *obj;
@@ -78,14 +80,14 @@ bool Map::addObjectAt(object::Object * obj, int x, int y) {
 }
 
 /*
- *  Draws stage to console naively. Iterates through every object::Object located in Map and places it
+ *  Draws stage to console naively. Iterates through every Object located in Map and places it
  *  in the console for display.
  *
  *  @param none
  *  @return void
  */
 void Map::drawStage() {
-    for (std::map<std::tuple<int, int>, object::Object>::iterator mapIt = stage.begin();
+    for (std::map<std::tuple<int, int>, Object>::iterator mapIt = stage.begin();
             mapIt != stage.end();
             mapIt++) {
         TCODConsole::root->putChar(std::get<0>(mapIt->first),

@@ -1,32 +1,26 @@
-#include "object.hpp"
-#include "event.hpp"
+#include <iostream>
 
-/*
- * @param EventKind, unsigned int, std::string
- */
-Event(
-    EventKind k,
-    std::string t,
-    unsigned int a
-) {
+#include "object.hpp"
+
+Event::Event(EventKind k, std::string m, unsigned int a) {
     kind = k;
+    modifier = m;
     amount = a;
-    type = t;
 }
 
 /*
  * Getters
  */
-EventKind getKind() { return kind; }
-std::string event::getType() { return type; }
-unsigned int event::getAmount() { return amount; }
+EventKind Event::getKind() { return kind; }
+std::string Event::getModifier() { return modifier; }
+unsigned int Event::getAmount() { return amount; }
 
 /*
 *  Default constructor
 *
 *  @param none
 */
-object::Object() {
+Object::Object() {
     std::string id = "";
     disp_char = '#';
     passable = false;
@@ -39,49 +33,43 @@ object::Object() {
 /*
 *  @param char, std::string
 */
-object::Object(char c, std::string name) {
+Object::Object(char c, std::string name) {
     id = name;
     disp_char = c;
 }
 /*
 *  Getter and setter for disp_char
 */
-char & object::ch() { return disp_char; }
+char & Object::ch() { return disp_char; }
 /*
 *  Getter and setter for disp_char
 */
-std::string & object::name() { return id; }
+std::string & Object::name() { return id; }
 /*
 *  X and Y coordinate getters and setters
 */
-int & object::x() { return x_; }
-int & object::y() { return y_; }
+int & Object::x() { return x_; }
+int & Object::y() { return y_; }
 
 /*
 * hp getter/setter
 */
-unsigned int & object::hp() { return hp_; }
+unsigned int & Object::hp() { return hp_; }
 
-/*
-* Receive an event::Event and have all possessed components deal with it as
-* they might
-*/
-void object::getEvent(Event e) {
-    for (Component c : components) {
-        c.processEvent(e, this);
-    }
-}
-
-void object::processEvent(Event e) {
+void Object::handleEvent(Event e) {
     // Only deal with an Event if and how its type is relevant to
-    // this component::Component's kind.
-    if (kind == "physics") {
-        // accept damage
-        if (e.getKind() == "take_damage") {
-            subject->hp() -= e.getAmount();
-        }
+    // this Component's kind.
+    switch (e.getKind()) {
+        case take_damage:
+            // if components contains physics,
+            //     this.hp -= e.getAmount()
+            break;
+        case heal:
+            break;
+        case move_to:
+            break;
+        default: // Undefined event kind; notify and crash.
+            std::cerr << "Object received undefined EventKind: \"" << e.getKind() << "\"" << std::endl;
+            exit(EXIT_FAILURE);
     }
-//  else if (kind == "...") {
-//
-//  }
 }

@@ -18,10 +18,10 @@
  *  @param none
  *  @return std::tuple<Map::Map, std::tuple<int, int>>
  */
-std::tuple<Map::Map, std::tuple<int, int>> renderTestMap() {
-    Object::Object * wall  = new Object::Object('#', "rock wall");
-    Object::Object * floor = new Object::Object('.', "wall floor");
-    Object::Object * stick = new Object::Object('/', "stick");
+std::tuple<Map::Map, std::tuple> renderTestMap() {
+    Object * wall  = new Object('#', "rock wall");
+    Object * floor = new Object('.', "wall floor");
+    Object * stick = new Object('/', "stick");
     int player_x = 3;
     int player_y = 4;
 
@@ -106,9 +106,9 @@ std::tuple<int, int> getMaxDimensions(std::string filename) {
  *  @param std::string
  */
 std::tuple<Map::Map, std::tuple<int, int>> loadMap(std::string filename) {
-    Object::Object * wall  = new Object::Object('#', "rock wall");
-    Object::Object * floor = new Object::Object('.', "wall floor");
-    Object::Object * stick = new Object::Object('/', "stick");
+    Object * wall  = new Object('#', "rock wall");
+    Object * floor = new Object('.', "wall floor");
+    Object * stick = new Object('/', "stick");
     int player_x = 0;
     int player_y = 0;
 
@@ -177,7 +177,7 @@ std::tuple<Map::Map, std::tuple<int, int>> loadMap(std::string filename) {
 }
 
 int main() {
-    Map::Map newMap;
+    Map newMap;
     int player_x, player_y;
 
     //auto ret = renderTestMap();

@@ -1,6 +1,8 @@
 #pragma once
 #include <map>
 
+#include "object.hpp"
+
 class Map {
     private:
         std::map<std::tuple<int, int>, Object> stage;
