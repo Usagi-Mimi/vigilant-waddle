@@ -13,19 +13,19 @@
 #include "map.hpp"
 
 /*
- *  Renders a test Map::Map, returning the Map::Map and the player std::tuple<int, int>
+ *  Renders a test Map, returning the Map and the player coordinates in a tuple
  *
  *  @param none
- *  @return std::tuple<Map::Map, std::tuple<int, int>>
+ *  @return std::tuple<Map, std::tuple<int, int>>
  */
-std::tuple<Map::Map, std::tuple> renderTestMap() {
+std::tuple<Map, std::tuple<int, int>> renderTestMap() {
     Object * wall  = new Object('#', "rock wall");
     Object * floor = new Object('.', "wall floor");
     Object * stick = new Object('/', "stick");
     int player_x = 3;
     int player_y = 4;
 
-    Map::Map newMap;
+    Map newMap;
 
     newMap.addObjectAt(stick, 5, 3);
 
@@ -97,22 +97,22 @@ std::tuple<int, int> getMaxDimensions(std::string filename) {
 }
 
 /*
- *  Load a Map from a file, render it to a Map::Map, and return that Map::Map and the
- *  player std::tuple<int, int>
+ *  Load a Map from a file, render it to a Map, and return that Map and the
+ *  player coordinates in a tuple
  *
  *  If a player was found, the last player's coordinates are returned. If no
  *  player was found, (0,0) are returned as the player coordinates.
  *
  *  @param std::string
  */
-std::tuple<Map::Map, std::tuple<int, int>> loadMap(std::string filename) {
+std::tuple<Map, std::tuple<int, int>> loadMap(std::string filename) {
     Object * wall  = new Object('#', "rock wall");
     Object * floor = new Object('.', "wall floor");
     Object * stick = new Object('/', "stick");
     int player_x = 0;
     int player_y = 0;
 
-    Map::Map newMap;
+    Map newMap;
 
     std::ifstream ifs { filename };
 
@@ -181,7 +181,7 @@ int main() {
     int player_x, player_y;
 
     //auto ret = renderTestMap();
-    auto ret = loadMap("./Maps/test.txt");
+    auto ret = loadMap("./maps/test.txt");
 
     newMap = std::get<0>(ret);
     player_x = std::get<0>(std::get<1>(ret));

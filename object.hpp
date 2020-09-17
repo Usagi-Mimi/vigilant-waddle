@@ -3,17 +3,28 @@
 #include <string>
 #include <set>
 
+/*
+ * Components represent things Objects may be capable of or things that apply
+ * to those Objects. For example, an Object who holds the Component "physics"
+ * is subject to physical actions (being damaged, etc.).
+ */
 enum Component {
     physics, // can take damage, has hp, etc.
     sentient, // can be talked to, has pathfinding if not sessile, etc.
 };
 
+/*
+ * The different kinds of Events possible
+ */
 enum EventKind {
     take_damage,
     heal,
     move_to,
 };
 
+/*
+ * Basic datagram communicating actions between or upon Objects
+ */
 class Event {
     private:
         EventKind kind;
@@ -27,6 +38,9 @@ class Event {
         unsigned int getAmount();
 };
 
+/*
+ * The base entity of many things
+ */
 class Object {
     private:
         std::string id;

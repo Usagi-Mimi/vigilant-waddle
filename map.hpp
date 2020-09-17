@@ -3,6 +3,10 @@
 
 #include "object.hpp"
 
+/*
+ * Container for the "stage", where the player spends most of their time fighting
+ * stuff and looting stuff
+ */
 class Map {
     private:
         std::map<std::tuple<int, int>, Object> stage;

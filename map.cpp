@@ -13,7 +13,7 @@ bool Map::isObjectAt(std::tuple<int, int> coords) {
 }
 
 /*
- *  @param integer x and y coordinates
+ * @param integer x and y coordinates
  */
 bool Map::isObjectAt(int x, int y) {
     std::tuple<int, int> coords = std::tuple<int, int>(x, y);
@@ -26,17 +26,17 @@ bool Map::isObjectAt(int x, int y) {
 }
 
 /*
- *  Return object at specified location
+ * Return object at specified location
  *
- *  @param std::tuple<int, int> tuple
- *  @return Object
+ * @param std::tuple<int, int> tuple
+ * @return Object
  */
-Object Map::fetchObject(std::tuple<int, int> coords) {
+Object Map::fetchObjectAt(std::tuple<int, int> coords) {
     return stage[coords];
 }
 
 /*
- *  @param integer x and y coordinates
+ * @param integer x and y coordinates
  */
 Object Map::fetchObjectAt(int x, int y) {
     std::tuple<int, int> coords = std::tuple<int, int>(x, y);
@@ -44,10 +44,10 @@ Object Map::fetchObjectAt(int x, int y) {
 }
 
 /*
- *  Add object to specific location. Fails if coordinates are occupied.
+ * Add object to specific location. Fails if coordinates are occupied.
  *
- *  @param std::tuple<int, int> tuple, Object
- *  @return boolean, true if addition successful
+ * @param std::tuple<int, int> tuple, Object
+ * @return boolean, true if addition successful
  */
 bool Map::addObjectAt(Object * obj, std::tuple<int, int> coords) {
     if (!isObjectAt(coords)) {
@@ -63,7 +63,7 @@ bool Map::addObjectAt(Object * obj, std::tuple<int, int> coords) {
 }
 
 /*
- *  @param integer x and y coordinates
+ * @param integer x and y coordinates
  */
 bool Map::addObjectAt(Object * obj, int x, int y) {
     std::tuple<int, int> coords = std::tuple<int, int>(x, y);
@@ -80,11 +80,11 @@ bool Map::addObjectAt(Object * obj, int x, int y) {
 }
 
 /*
- *  Draws stage to console naively. Iterates through every Object located in Map and places it
- *  in the console for display.
+ * Draws stage to console naively. Iterates through every Object located in Map and places it
+ * in the console for display.
  *
- *  @param none
- *  @return void
+ * @param none
+ * @return void
  */
 void Map::drawStage() {
     for (std::map<std::tuple<int, int>, Object>::iterator mapIt = stage.begin();
