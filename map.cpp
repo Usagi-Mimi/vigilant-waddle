@@ -179,7 +179,7 @@ std::tuple<unsigned int, unsigned int> Map::loadMap(std::string filename) {
         // (This prohibits beginning a row of tiles with two sticks, but we
         // shouldn't be trying to render entities like that with loadMap() at
         // all and reserve it for terrain only. This is because we can't specify
-        // terrain under entities we type in by hand in ./maps/ anyway.
+        // terrain under entities we type in by hand in ./maps/ anyway.)
         if (
             currentLine.length() <= 0 || 
             currentLine[0] == '\n' ||
