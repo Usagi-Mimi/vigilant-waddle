@@ -11,7 +11,7 @@
 
 int main() {
     Map newMap;
-    int player_x, player_y;
+    unsigned int player_x, player_y;
 
     auto ret = newMap.loadMap("./maps/test.txt");
 

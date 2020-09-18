@@ -7,7 +7,7 @@
 #include "map.hpp"
 #include "object.hpp"
 
-bool Map::isObjectAt(std::tuple<int, int> coords) {
+bool Map::isObjectAt(std::tuple<unsigned int, unsigned int> coords) {
     if (stage.count(coords) > 0) {
         return true;
     }
@@ -17,10 +17,10 @@ bool Map::isObjectAt(std::tuple<int, int> coords) {
 }
 
 /*
- * @param integer x and y coordinates
+ * @param unsigned integer x and y coordinates
  */
-bool Map::isObjectAt(int x, int y) {
-    std::tuple<int, int> coords = std::tuple<int, int>(x, y);
+bool Map::isObjectAt(unsigned int x, unsigned int y) {
+    std::tuple<unsigned int, unsigned int> coords = std::tuple<unsigned int, unsigned int>(x, y);
     if (stage.count(coords) > 0) {
         return true;
     }
@@ -32,28 +32,28 @@ bool Map::isObjectAt(int x, int y) {
 /*
  * Return object at specified location
  *
- * @param std::tuple<int, int> tuple
+ * @param std::tuple<unsigned int, unsigned int> tuple
  * @return Object
  */
-Object Map::fetchObjectAt(std::tuple<int, int> coords) {
+Object Map::fetchObjectAt(std::tuple<unsigned int, unsigned int> coords) {
     return stage[coords];
 }
 
 /*
- * @param integer x and y coordinates
+ * @param unsigned integer x and y coordinates
  */
-Object Map::fetchObjectAt(int x, int y) {
-    std::tuple<int, int> coords = std::tuple<int, int>(x, y);
+Object Map::fetchObjectAt(unsigned int x, unsigned int y) {
+    std::tuple<unsigned int, unsigned int> coords = std::tuple<unsigned int, unsigned int>(x, y);
     return stage[coords];
 }
 
 /*
  * Add object to specific location. Fails if coordinates are occupied.
  *
- * @param std::tuple<int, int> tuple, Object
+ * @param std::tuple<unsigned int, unsigned int> tuple, Object
  * @return boolean, true if addition successful
  */
-bool Map::addObjectAt(Object * obj, std::tuple<int, int> coords) {
+bool Map::addObjectAt(Object * obj, std::tuple<unsigned int, unsigned int> coords) {
     if (!isObjectAt(coords)) {
         stage[coords] = *obj;
         obj->x() = std::get<1>(coords);
@@ -67,10 +67,10 @@ bool Map::addObjectAt(Object * obj, std::tuple<int, int> coords) {
 }
 
 /*
- * @param integer x and y coordinates
+ * @param unsigned integer x and y coordinates
  */
-bool Map::addObjectAt(Object * obj, int x, int y) {
-    std::tuple<int, int> coords = std::tuple<int, int>(x, y);
+bool Map::addObjectAt(Object * obj, unsigned int x, unsigned int y) {
+    std::tuple<unsigned int, unsigned int> coords = std::tuple<unsigned int, unsigned int>(x, y);
     if (!isObjectAt(coords)) {
         stage[coords] = *obj;
         obj->x() = x;
@@ -91,7 +91,7 @@ bool Map::addObjectAt(Object * obj, int x, int y) {
  * @return void
  */
 void Map::drawStage() {
-    for (std::map<std::tuple<int, int>, Object>::iterator mapIt = stage.begin();
+    for (std::map<std::tuple<unsigned int, unsigned int>, Object>::iterator mapIt = stage.begin();
             mapIt != stage.end();
             mapIt++) {
         TCODConsole::root->putChar(std::get<0>(mapIt->first),
@@ -106,9 +106,9 @@ void Map::drawStage() {
  *
  *  @param std::string
  */
-std::tuple<int, int> Map::getMaxDimensions(std::string filename) {
-    int max_x = 0;
-    int max_y = 0;
+std::tuple<unsigned int, unsigned int> Map::getMaxDimensions(std::string filename) {
+    unsigned int max_x = 0;
+    unsigned int max_y = 0;
     std::ifstream ifs { filename };
 
     while (ifs) {
@@ -143,12 +143,12 @@ std::tuple<int, int> Map::getMaxDimensions(std::string filename) {
  *
  *  @param std::string
  */
-std::tuple<int, int> Map::loadMap(std::string filename) {
+std::tuple<unsigned int, unsigned int> Map::loadMap(std::string filename) {
     Object * wall  = new Object('#', "rock wall");
     Object * floor = new Object('.', "wall floor");
     Object * stick = new Object('/', "stick");
-    int player_x = 0;
-    int player_y = 0;
+    unsigned int player_x = 0;
+    unsigned int player_y = 0;
 
     std::ifstream ifs { filename };
 
@@ -158,8 +158,8 @@ std::tuple<int, int> Map::loadMap(std::string filename) {
     }
 
     auto max_dimensions = getMaxDimensions(filename);
-    int max_x = std::get<0>(max_dimensions);
-    int max_y = std::get<1>(max_dimensions);
+    unsigned int max_x = std::get<0>(max_dimensions);
+    unsigned int max_y = std::get<1>(max_dimensions);
 
     if (max_x <= 0 || max_y <= 0) {
         std::cerr << "map.cpp::loadMap(): Invalid Map \"" << filename << "\"!" << std::endl;
@@ -168,8 +168,8 @@ std::tuple<int, int> Map::loadMap(std::string filename) {
 
     TCODConsole::initRoot(max_x, max_y, "vigilant-waddle", false);
 
-    int curr_x = 0;
-    int curr_y = 0;
+    unsigned int curr_x = 0;
+    unsigned int curr_y = 0;
 
     while (ifs) {
         std::string currentLine;

@@ -9,17 +9,17 @@
  */
 class Map {
     private:
-        std::map<std::tuple<int, int>, Object> stage;
-        int objCount;
+        std::map<std::tuple<unsigned int, unsigned int>, Object> stage;
+        unsigned int objCount;
         
-        std::tuple<int, int> getMaxDimensions(std::string filename);
+        std::tuple<unsigned int, unsigned int> getMaxDimensions(std::string filename);
     public:
-        bool isObjectAt(std::tuple<int, int> coords);
-        bool isObjectAt(int x, int y);
-        Object fetchObjectAt(std::tuple<int, int> coords);
-        Object fetchObjectAt(int x, int y);
-        bool addObjectAt(Object * obj, std::tuple<int, int> coords);
-        bool addObjectAt(Object * obj, int x, int y);
+        bool isObjectAt(std::tuple<unsigned int, unsigned int> coords);
+        bool isObjectAt(unsigned int x, unsigned int y);
+        Object fetchObjectAt(std::tuple<unsigned int, unsigned int> coords);
+        Object fetchObjectAt(unsigned int x, unsigned int y);
+        bool addObjectAt(Object * obj, std::tuple<unsigned int, unsigned int> coords);
+        bool addObjectAt(Object * obj, unsigned int x, unsigned int y);
         void drawStage();
-        std::tuple<int, int> loadMap(std::string filename);
+        std::tuple<unsigned int, unsigned int> loadMap(std::string filename);
 };

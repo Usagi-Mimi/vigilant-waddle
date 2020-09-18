@@ -57,8 +57,8 @@ std::string & Object::name() { return id; }
 /*
  * X and Y coordinate getters and setters
  */
-int & Object::x() { return x_; }
-int & Object::y() { return y_; }
+unsigned int & Object::x() { return x_; }
+unsigned int & Object::y() { return y_; }
 
 /*
  * HP getter/setter

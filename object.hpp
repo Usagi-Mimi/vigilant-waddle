@@ -47,8 +47,8 @@ class Object {
         char disp_char;
         bool passable;
 
-        int x_;
-        int y_;
+        unsigned int x_;
+        unsigned int y_;
 
         unsigned int hp_;
 
@@ -58,8 +58,8 @@ class Object {
         Object(char c, std::string name);
         char & ch();
         std::string & name();
-        int & x();
-        int & y();
+        unsigned int & x();
+        unsigned int & y();
         unsigned int & hp();
         void handleEvent(Event e);
 };
