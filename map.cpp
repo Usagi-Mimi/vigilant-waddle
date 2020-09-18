@@ -115,7 +115,11 @@ std::tuple<int, int> Map::getMaxDimensions(std::string filename) {
         std::string currentLine;
 
         std::getline(ifs, currentLine);
-        if (currentLine.length() > 0 && currentLine.substr(0, 2) != "//") {
+        if (
+            currentLine.length() > 0 && 
+            currentLine[0] != '\n' &&
+            currentLine.substr(0, 2) != "//"
+        ) {
             if (max_x < currentLine.length()) {
                 max_x = currentLine.length();
             }
@@ -149,7 +153,7 @@ std::tuple<int, int> Map::loadMap(std::string filename) {
     std::ifstream ifs { filename };
 
     if (!ifs) {
-        std::cerr << "loadMap.cpp: Could not open \"" << filename << "\"!" << std::endl;
+        std::cerr << "map.cpp::loadMap(): Could not open \"" << filename << "\"!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -158,7 +162,7 @@ std::tuple<int, int> Map::loadMap(std::string filename) {
     int max_y = std::get<1>(max_dimensions);
 
     if (max_x <= 0 || max_y <= 0) {
-        std::cerr << "loadMap.cpp: Invalid Map \"" << filename << "\"!" << std::endl;
+        std::cerr << "map.cpp::loadMap(): Invalid Map \"" << filename << "\"!" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -172,14 +176,19 @@ std::tuple<int, int> Map::loadMap(std::string filename) {
 
         std::getline(ifs, currentLine);
         // Skip lines that are empty or begin with "//"
-        if (currentLine.substr(0, 2) == "//") {
+        // (This prohibits beginning a row of tiles with two sticks, but we
+        // shouldn't be trying to render entities like that with loadMap() at
+        // all and reserve it for terrain only. This is because we can't specify
+        // terrain under entities we type in by hand in ./maps/ anyway.
+        if (
+            currentLine.length() <= 0 || 
+            currentLine[0] == '\n' ||
+            currentLine.substr(0, 2) == "//"
+        ) {
             continue;
         }
         for (auto iter = currentLine.cbegin(); iter != currentLine.cend(); ++iter) {
             switch (*iter) {
-                case '#': // wall
-                    this->addObjectAt(wall, curr_x, curr_y);
-                    break;
                 case '.': // floor
                     this->addObjectAt(floor, curr_x, curr_y);
                     break;
@@ -191,9 +200,16 @@ std::tuple<int, int> Map::loadMap(std::string filename) {
                 case '/': // stick
                     this->addObjectAt(stick, curr_x, curr_y);
                     break;
-                default:
+                case '#': // wall
+                default: // add wall as default filler for undefined tiles
+                    this->addObjectAt(wall, curr_x, curr_y);
                     break;
             }
+            curr_x++;
+        }
+        // fill remaining undefined tiles in currentLine with wall
+        while (curr_x < max_x) {
+            this->addObjectAt(wall, curr_x, curr_y);
             curr_x++;
         }
         curr_x = 0; // reset curr_x for next row
