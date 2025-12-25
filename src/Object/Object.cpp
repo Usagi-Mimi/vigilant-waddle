@@ -1,6 +1,6 @@
-#include <iostream>
+#include "Object.hpp"
 
-#include "object.hpp"
+#include <iostream>
 
 Event::Event(EventKind k, std::string m, unsigned int a) {
     kind = k;

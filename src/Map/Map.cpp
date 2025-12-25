@@ -1,11 +1,10 @@
-#include <iostream>
-#include <stdlib.h>
-#include <fstream>
+#include "Map.hpp"
 
 #include <libtcod.hpp>
 
-#include "map.hpp"
-#include "object.hpp"
+#include <iostream>
+#include <stdlib.h>
+#include <fstream>
 
 bool Map::isObjectAt(std::tuple<unsigned int, unsigned int> coords) {
     if (stage.count(coords) > 0) {
@@ -84,23 +83,6 @@ bool Map::addObjectAt(Object * obj, unsigned int x, unsigned int y) {
 }
 
 /*
- * Draws stage to console naively. Iterates through every Object located in Map and places it
- * in the console for display.
- *
- * @param none
- * @return void
- */
-void Map::drawStage() {
-    for (std::map<std::tuple<unsigned int, unsigned int>, Object>::iterator mapIt = stage.begin();
-            mapIt != stage.end();
-            mapIt++) {
-        TCODConsole::root->putChar(std::get<0>(mapIt->first),
-                                    std::get<1>(mapIt->first),
-                                    mapIt->second.ch());
-    }
-}
-
-/*
  *  Load a Map from a file-enclose and return its maximum x, y dimensions as
  *  a std::tuple, skipping empty lines or lines beginning with "//"
  *
@@ -116,7 +98,7 @@ std::tuple<unsigned int, unsigned int> Map::getMaxDimensions(std::string filenam
 
         std::getline(ifs, currentLine);
         if (
-            currentLine.length() > 0 && 
+            currentLine.length() > 0 &&
             currentLine[0] != '\n' &&
             currentLine.substr(0, 2) != "//"
         ) {
@@ -136,7 +118,7 @@ std::tuple<unsigned int, unsigned int> Map::getMaxDimensions(std::string filenam
  *
  *  If a player was found, the last player's coordinates are returned. If no
  *  player was found, (0,0) are returned as the player coordinates.
- * 
+ *
  * NOTE: In the future, this should probably be terrain-only, not allowing any
  * non-terrain entities, because they overlap and you can't indicate the kind
  * of floor that the '@' you typed is standing on, for example.
@@ -166,8 +148,6 @@ std::tuple<unsigned int, unsigned int> Map::loadMap(std::string filename) {
         exit(EXIT_FAILURE);
     }
 
-    TCODConsole::initRoot(max_x, max_y, "vigilant-waddle", false);
-
     unsigned int curr_x = 0;
     unsigned int curr_y = 0;
 
@@ -181,7 +161,7 @@ std::tuple<unsigned int, unsigned int> Map::loadMap(std::string filename) {
         // all and reserve it for terrain only. This is because we can't specify
         // terrain under entities we type in by hand in ./maps/ anyway.)
         if (
-            currentLine.length() <= 0 || 
+            currentLine.length() <= 0 ||
             currentLine[0] == '\n' ||
             currentLine.substr(0, 2) == "//"
         ) {
@@ -193,7 +173,6 @@ std::tuple<unsigned int, unsigned int> Map::loadMap(std::string filename) {
                     this->addObjectAt(floor, curr_x, curr_y);
                     break;
                 case '@': // player
-                    TCODConsole::root->putChar(curr_x, curr_y, '@');
                     player_x = curr_x;
                     player_y = curr_y;
                     break;
