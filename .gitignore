@@ -36,9 +36,10 @@
 
 # Directories
 build
+priv
 
 # Terminal Font
 terminal.png
 
-# Makefiles
+# Makefiles (since compilation syntax differs between us)
 makefile
