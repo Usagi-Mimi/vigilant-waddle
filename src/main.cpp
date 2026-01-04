@@ -1,108 +1,153 @@
-// std
-#include <iostream>
-#include <tuple>
+#include "GameWindow.hpp"
+#include "FontWoes.hpp"
+#include "Menu.hpp"
+#include "PlayStage.hpp"
+#include "colors.hpp"
 
-// foreign
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
-#include <libtcod.hpp>
+#include <SDL3/SDL_timer.h>
+#include <SDL3/SDL_render.h>
 
-// local
-#include "Object.hpp"
-#include "Map.hpp"
+#include <cstdlib>
+#include <mutex>
+
+#define SPRITE_WIDTH 32
+#define SPRITE_HEIGHT 48
+#define WINDOW_WIDTH 70 * SPRITE_WIDTH
+#define WINDOW_HEIGHT 25 * SPRITE_HEIGHT
 
 int main()
 {
-    auto console = tcod::Console{80, 25};  // Main console
+    vw::GameWindow window(SPRITE_WIDTH, SPRITE_HEIGHT,
+                          WINDOW_WIDTH, WINDOW_HEIGHT);
+    vw::FontWoes font_manager(window);
 
-    // Configure context
-    auto params = TCOD_ContextParams{};
-    params.console = console.get();
-    params.window_title = "Vigilant Waddle";
-    params.sdl_window_flags = SDL_WINDOW_RESIZABLE;
+    vw::Menu::MenuAction a_new_game { 0, 0,
+                                vw::GameWindow::GameState::PlayStage,
+                                "New game", SDL_SCANCODE_N, 0 };
+    vw::Menu::MenuAction a_quit     { 0, 0,
+                                vw::GameWindow::GameState::Exit,
+                                "Quit", SDL_SCANCODE_Q, 0 };
+    vw::Menu main_menu
+    ("Main Menu",
+     {
+         a_new_game,
+         a_quit,
+     },
+     window,
+     font_manager);
 
-    // Assuming we're in `build/`
-    auto tileset = tcod::load_tilesheet("../fonts/terminal8x12_gs_ro.png",
-                                        {16, 16},
-                                        tcod::CHARMAP_CP437);
-    params.tileset = tileset.get();
+    vw::PlayStage stage(window, font_manager);
 
-    auto context = tcod::Context(params);
+    std::once_flag game_started;
+    SDL_Event e;
+    SDL_zero(e);
 
-    // Load map
-    Map newMap;
-    int player_x, player_y;
-    auto ret = newMap.loadMap("../maps/test.txt"); // Assuming we're in `build/`
+    // Update game state at 60 FPS (`1000 ms / 60 FPS = 16 ms` per frame).
+    Uint64 const update_ms = 16;
+    Uint64 prev_ms = SDL_GetTicks();
+    Uint64 lag_ms = 0;
+    size_t frames = 0;
+    float avg_fps = 0;
 
-    player_x = std::get<0>(ret);
-    player_y = std::get<1>(ret);
-
-    bool running = true;
-    while (running)
+    while (window.state != vw::GameWindow::GameState::Exit)
     {
-        console.clear();
+        // Update the elapsed time.
+        Uint64 curr_ms = SDL_GetTicks();
+        Uint64 elapsed_ms = curr_ms - prev_ms;
+        prev_ms = curr_ms;
+        lag_ms += elapsed_ms;
 
-        tcod::print(console, {player_x, player_y}, "@", std::nullopt, std::nullopt);
-        context.present(console); // Update display
-
-        SDL_Event event;
-        SDL_zero(event);
-        SDL_WaitEvent(nullptr); // Sleep until event becomes available
-        while (SDL_PollEvent(&event))
+        /*************************
+         * 1 Process user in put *
+         *************************/
+        while (SDL_PollEvent(&e))
         {
-            // Convert pixel coordinates to tile coordinates
-            context.convert_event_coordinates(event);
-
-            switch (event.type)
+            if (e.type == SDL_EVENT_QUIT) // Quit request (e.g. 'x' button)
             {
-            case SDL_EVENT_KEY_DOWN:
-                switch (event.key.scancode)
-                {
-                case SDL_SCANCODE_UP:
-                case SDL_SCANCODE_KP_8:
-                    player_y--;
+                window.state = vw::GameWindow::GameState::Exit;
+            }
+
+            switch (window.state)
+            {
+                case vw::GameWindow::GameState::MainMenu:
+                    main_menu.process_input(&e);
                     break;
-                case SDL_SCANCODE_DOWN:
-                case SDL_SCANCODE_KP_2:
-                    player_y++;
+                case vw::GameWindow::GameState::PlayStage:
+                    // Change "New game" to "Continue" after starting a game.
+                    std::call_once
+                    (
+                        game_started,
+                        [&]
+                        {
+                            vw::Menu::MenuAction& play_action = main_menu.actions.front();
+                            play_action.text = "Continue";
+                            play_action.keybind = SDL_SCANCODE_C;
+                        }
+                    );
+                    stage.process_input(&e);
                     break;
-                case SDL_SCANCODE_LEFT:
-                case SDL_SCANCODE_KP_4:
-                    player_x--;
-                    break;
-                case SDL_SCANCODE_RIGHT:
-                case SDL_SCANCODE_KP_6:
-                    player_x++;
-                    break;
-                case SDL_SCANCODE_KP_7:
-                    player_x--;
-                    player_y--;
-                    break;
-                case SDL_SCANCODE_KP_9:
-                    player_x++;
-                    player_y--;
-                    break;
-                case SDL_SCANCODE_KP_1:
-                    player_x--;
-                    player_y++;
-                    break;
-                case SDL_SCANCODE_KP_3:
-                    player_x++;
-                    player_y++;
+                case vw::GameWindow::GameState::InGameMenu:
+                    main_menu.process_input(&e); // Re-use main menu
                     break;
                 default:
                     break;
-                }
+            }
+        }
+
+        /***************************************************
+         * 2 Update the game's logic (execute AI, physics) *
+         ***************************************************/
+        while (lag_ms >= update_ms)
+        {
+            switch (window.state)
+            {
+                case vw::GameWindow::GameState::PlayStage:
+                    stage.update();
+                    break;
+                default:
+                    break;
+            }
+
+            lag_ms -= update_ms;
+        }
+
+        /*****************************
+         * 3 Render the game objects *
+         *****************************/
+        SDL_SetRenderDrawColor(window.render,
+                               vw::g_black.r,
+                               vw::g_black.g,
+                               vw::g_black.b,
+                               vw::g_black.a);
+        SDL_RenderClear(window.render);
+
+        switch (window.state)
+        {
+            case vw::GameWindow::GameState::MainMenu:
+                main_menu.render();
                 break;
-            case SDL_EVENT_QUIT:
-                running = false;
+            case vw::GameWindow::GameState::PlayStage:
+                stage.render();
+                break;
+            case vw::GameWindow::GameState::InGameMenu:
+                // Render main menu atop game world
+                stage.render();
+                main_menu.render();
                 break;
             default:
                 break;
-            }
         }
+
+        if (window.show_fps)
+        {
+            // Calculate FPS. (Ticks are in ms, hence division by 1000 for s.)
+            ++frames;
+            avg_fps = frames / (SDL_GetTicks() / 1000.f);
+            font_manager.show_fps(avg_fps, vw::g_ui_dark);
+        }
+
+        SDL_RenderPresent(window.render); // Show current frame!
     }
 
-    SDL_Quit();
     return EXIT_SUCCESS;
 }
