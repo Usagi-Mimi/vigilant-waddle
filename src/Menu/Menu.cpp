@@ -4,10 +4,10 @@
 
 #include <SDL3/SDL_render.h>
 
-namespace vw
+namespace
 {
 
-static char const* selector = ">";
+char const* selector = ">";
 
 }
 
