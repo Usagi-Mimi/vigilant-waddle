@@ -165,7 +165,7 @@ void vw::FontWoes::show_fps(float const fps, SDL_Color const& color) const
     static std::string fps_display;
 
     fps_display.clear();
-    fps_display = std::format("FPS: {:3f}", fps);
+    fps_display = std::format("FPS: {}", fps);
 
     render_string(fps_display.c_str(),
                   0,
