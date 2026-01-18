@@ -98,10 +98,10 @@ public:
     font_dimensions(std::vector<std::string_view>& strings, Font font);
 
     /**
-     * @brief Prints the given FPS value at a corner of the screen in the given
-     * color
+     * @brief Renders the given FPS value in the given color at a corner of the
+     * screen
      */
-    void show_fps(float const fps, SDL_Color const& color) const;
+    void render_fps(float const fps, SDL_Color const& color) const;
 
     TTF_Font* ui_font;
     TTF_Font* ui_font_small;
