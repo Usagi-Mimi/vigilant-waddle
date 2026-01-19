@@ -36,12 +36,12 @@ int main()
                           WINDOW_WIDTH, WINDOW_HEIGHT);
     vw::FontWoes font_manager(window);
 
-    vw::Menu::MenuAction a_new_game { 0, 0,
-                                vw::GameWindow::GameState::PlayStage,
-                                "New game", SDL_SCANCODE_N, 0 };
-    vw::Menu::MenuAction a_quit     { 0, 0,
-                                vw::GameWindow::GameState::Exit,
-                                "Quit", SDL_SCANCODE_Q, 0 };
+    vw::Menu::Action a_new_game { 0, 0,
+                                  vw::GameWindow::GameState::PlayStage,
+                                  "New game", SDL_SCANCODE_N, 0 };
+    vw::Menu::Action a_quit     { 0, 0,
+                                  vw::GameWindow::GameState::Exit,
+                                  "Quit", SDL_SCANCODE_Q, 0 };
     vw::Menu main_menu
     ("Main Menu",
      {
@@ -88,9 +88,9 @@ int main()
                         game_started,
                         [&]
                         {
-                            vw::Menu::MenuAction& play_action = main_menu.actions.front();
-                            play_action.text = "Continue";
-                            play_action.keybind = SDL_SCANCODE_C;
+                            vw::Menu::Action& play = main_menu.actions.front();
+                            play.text = "Continue";
+                            play.keybind = SDL_SCANCODE_C;
                         }
                     );
                     stage.process_input(&e);

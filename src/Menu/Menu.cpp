@@ -12,7 +12,7 @@ char const* selector = ">";
 }
 
 vw::Menu::Menu(std::string title,
-               std::vector<MenuAction> actions,
+               std::vector<Action> actions,
                GameWindow& window,
                FontWoes& font_manager) :
                actions(actions),
@@ -25,7 +25,7 @@ vw::Menu::Menu(std::string title,
         title,
         "", // Separator
     };
-    for (MenuAction& a : this->actions)
+    for (Action& a : this->actions)
     {
         menu_strings.push_back(a.text);
     }
@@ -51,7 +51,7 @@ vw::Menu::Menu(std::string title,
 
     size_t y_spacing = title_y + font_size * 2; // Below title and separator
 
-    for (MenuAction& a : this->actions)
+    for (Action& a : this->actions)
     {
         a.x = title_x;
         a.y = y_spacing;
@@ -122,7 +122,7 @@ void vw::Menu::render(void)
     // Render title and all action items
     font_manager.render_string(title, 0, title_x, title_y, borders_and_text);
 
-    for (MenuAction& a : actions)
+    for (Action& a : actions)
     {
         font_manager.render_string(a.text, 0, a.x, a.y, borders_and_text);
         font_manager.highlight_keybind_indicator(a.text,

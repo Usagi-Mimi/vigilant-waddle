@@ -23,7 +23,7 @@ public:
     /**
      * @brief A selectable action item inside a menu
      */
-    struct MenuAction
+    struct Action
     {
         float x;
         float y;
@@ -32,14 +32,14 @@ public:
         SDL_Scancode keybind;
         size_t keybind_char_index;
 
-        bool operator==(MenuAction& other)
+        bool operator==(Action& other)
         {
             return text == other.text;
         }
     };
 
     Menu(std::string title,
-         std::vector<MenuAction> actions,
+         std::vector<Action> actions,
          GameWindow& window,
          FontWoes& font_manager);
 
@@ -47,7 +47,7 @@ public:
 
     void render(void);
 
-    std::vector<MenuAction> actions;
+    std::vector<Action> actions;
 
 private:
     GameWindow& window;
