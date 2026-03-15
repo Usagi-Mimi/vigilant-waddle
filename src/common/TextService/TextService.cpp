@@ -1,4 +1,4 @@
-#include "FontWoes.hpp"
+#include "TextService.hpp"
 #include "GameWindow.hpp"
 
 #include <SDL3_ttf/SDL_ttf.h>
@@ -7,19 +7,20 @@
 #include <string>
 #include <format>
 
-vw::FontWoes::FontWoes(GameWindow& window) : window(window)
+vw::TextService::TextService(GameWindow& win,
+                             std::string_view const font_path) : win(win)
 {
+    assert(!font_path.empty());
+
     // Initialize the font library and load our font(s).
     TTF_Init();
-
-    char const* font_path = "../fonts/Not-Jam/Old_Style/NotJamOldStyle14.ttf";
-    ui_font = TTF_OpenFont(font_path, 28);
+    ui_font = TTF_OpenFont(font_path.data(), 14);
     assert(ui_font);
-    ui_font_small = TTF_OpenFont(font_path, 14);
+    ui_font_small = TTF_OpenFont(font_path.data(), 7);
     assert(ui_font_small);
 }
 
-vw::FontWoes::~FontWoes()
+vw::TextService::~TextService()
 {
     // Unload our font(s) and tear down the font library.
     TTF_CloseFont(ui_font);
@@ -28,7 +29,7 @@ vw::FontWoes::~FontWoes()
     TTF_Quit();
 }
 
-TTF_Font* vw::FontWoes::resolve_font(Font const font) const
+TTF_Font* vw::TextService::resolve_font(Font const font) const
 {
     TTF_Font* f = NULL;
     switch (font)
@@ -44,12 +45,13 @@ TTF_Font* vw::FontWoes::resolve_font(Font const font) const
     return f;
 }
 
-void vw::FontWoes::render_string(std::string_view string,
-                                 size_t const len,
-                                 float const x,
-                                 float const y,
-                                 SDL_Color const& color) const
+void vw::TextService::render_string(std::string_view string,
+                                    int const len,
+                                    float const x,
+                                    float const y,
+                                    SDL_Color const& color) const
 {
+    assert(!string.empty());
     /*
      * NOTE: Takes `0` for lengths of null-terminated strings.
      *
@@ -76,24 +78,26 @@ void vw::FontWoes::render_string(std::string_view string,
                                                 len,
                                                 color);
     assert(surface);
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(window.render, surface);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(win.ren, surface);
     assert(texture);
     SDL_FRect dst = {x, y, (float) surface->w, (float) surface->h};
 
-    SDL_RenderTexture(window.render, texture, NULL, &dst);
+    SDL_RenderTexture(win.ren, texture, NULL, &dst);
 
     SDL_DestroySurface(surface);
     SDL_DestroyTexture(texture);
 }
 
-void vw::FontWoes::highlight_keybind_indicator(std::string_view string,
-                                               size_t const index,
-                                               float const x,
-                                               float const y,
-                                               bool const hovered,
-                                               SDL_Color const& hovered_color,
-                                               SDL_Color const& other_color)
+void vw::TextService::highlight_keybind_indicator(std::string_view string,
+                                                  int const index,
+                                                  float const x,
+                                                  float const y,
+                                                  bool const hovered,
+                                                  SDL_Color const& hovered_color,
+                                                  SDL_Color const& other_color)
 {
+    assert(!string.empty());
+    assert(index >= 0);
     char const* char_offset = string.data() + index;
     SDL_Color const* color = hovered ? &hovered_color : &other_color;
     SDL_Surface* surface = TTF_RenderText_Solid(ui_font,
@@ -101,7 +105,7 @@ void vw::FontWoes::highlight_keybind_indicator(std::string_view string,
                                                 1,
                                                 *color);
     assert(surface);
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(window.render, surface);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(win.ren, surface);
     assert(texture);
 
     int distance_to_keybind_char = 0;
@@ -116,32 +120,35 @@ void vw::FontWoes::highlight_keybind_indicator(std::string_view string,
     SDL_FRect dst = {x + distance_to_keybind_char, y,
         (float) surface->w, (float) surface->h};
 
-        SDL_RenderTexture(window.render, texture, NULL, &dst);
+        SDL_RenderTexture(win.ren, texture, NULL, &dst);
 
         SDL_DestroySurface(surface);
         SDL_DestroyTexture(texture);
 }
 
-float vw::FontWoes::font_size(Font font) const
+float vw::TextService::font_size(Font font) const
 {
     TTF_Font* f = resolve_font(font);
     return TTF_GetFontSize(f);
 }
 
-std::tuple<size_t, size_t>
-vw::FontWoes::font_dimensions(std::string_view string, Font font)
+std::pair<int, int>
+vw::TextService::string_dimensions(std::string_view const string, Font font)
 {
+    assert(!string.empty());
     TTF_Font* f = resolve_font(font);
 
     int width = 0;
     int height = 0;
     TTF_GetStringSize(f, string.data(), 0, &width, &height);
-    return { static_cast<size_t>(width), static_cast<size_t>(height) };
+    return { static_cast<int>(width), static_cast<int>(height) };
 }
 
-std::tuple<size_t, size_t>
-vw::FontWoes::font_dimensions(std::vector<std::string_view>& strings, Font font)
+std::pair<int, int>
+vw::TextService::string_dimensions(std::vector<std::string_view> const& strings,
+                                   Font font)
 {
+    assert(!strings.empty());
     TTF_Font* f = resolve_font(font);
 
     int width_final = 0;
@@ -156,19 +163,19 @@ vw::FontWoes::font_dimensions(std::vector<std::string_view>& strings, Font font)
         height_final += height_temp;
     }
 
-    return { static_cast<size_t>(width_final),
-             static_cast<size_t>(height_final) };
+    return { static_cast<int>(width_final),
+             static_cast<int>(height_final) };
 }
 
-void vw::FontWoes::render_fps(float const fps, SDL_Color const& color) const
+void vw::TextService::render_fps(float const fps, SDL_Color const& color) const
 {
     static std::string fps_display;
 
     fps_display.clear();
     fps_display = std::format("FPS: {}", fps);
 
-    render_string(fps_display.c_str(),
+    render_string(fps_display,
                   0,
-                  0, window.height - TTF_GetFontHeight(ui_font),
+                  0, g_canvas_h - TTF_GetFontHeight(ui_font),
                   color);
 }

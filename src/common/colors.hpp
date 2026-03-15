@@ -13,6 +13,7 @@ namespace vw
  */
 inline constexpr SDL_Color g_black              = {  0,   0,   0, 255};
 inline constexpr SDL_Color g_white              = {255, 255, 255, 255};
+inline constexpr SDL_Color g_padding            = {  0,  27,  18, 255};
 inline constexpr SDL_Color g_ui_light           = g_white;
 inline constexpr SDL_Color g_ui_dark            = {  0, 120,  80, 255};
 inline constexpr SDL_Color g_ui_indicator_hover = {217, 217,  70, 255};

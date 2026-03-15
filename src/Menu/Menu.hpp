@@ -8,14 +8,15 @@
 
 #include <string>
 #include <vector>
+#include <string_view>
 
 namespace vw
 {
 
-class FontWoes;
+class TextService;
 
 /**
- * @brief Handles state, interactivity logic, and rendering of UI menus
+ * @brief A UI menu that the user can interact
  */
 class Menu final
 {
@@ -25,43 +26,43 @@ public:
      */
     struct Action
     {
-        float x;
-        float y;
-        GameWindow::GameState transitions_to;
+        int x = 0;
+        int y = 0;
+        GameState transitions_to;
         std::string text;
         SDL_Scancode keybind;
-        size_t keybind_char_index;
+        size_t keybind_char_index = 0;
 
-        bool operator==(Action& other)
+        bool operator==(Action const& other) const
         {
             return text == other.text;
         }
     };
 
     Menu(std::string title,
-         std::vector<Action> actions,
-         GameWindow& window,
-         FontWoes& font_manager);
+         std::initializer_list<Action> actions,
+         GameWindow& win,
+         TextService& text_service);
 
-    void process_input(SDL_Event* e);
+    void process_input(SDL_Event const* e);
 
     void render(void);
 
     std::vector<Action> actions;
 
 private:
-    GameWindow& window;
-    FontWoes& font_manager;
+    GameWindow& win;
+    TextService& text_service;
 
-    SDL_FRect outer_frame;
-    SDL_FRect inner_frame;
+    SDL_FRect outer_frame { 0, 0, 0, 0 };
+    SDL_FRect inner_frame { 0, 0, 0, 0 };
 
     std::string title;
-    int title_x;
-    int title_y;
+    int title_x = 0;
+    int title_y = 0;
 
-    size_t item_padding_for_selector;
-    size_t action_index;
+    std::string_view selector = ">";
+    int action_index = 0;
 };
 
 }
