@@ -1,9 +1,8 @@
-#ifndef FONTWOES_HPP
-#define FONTWOES_HPP
+#ifndef TEXTSERVICE_HPP
+#define TEXTSERVICE_HPP
 
 #include <cstddef>
 
-#include <tuple>
 #include <vector>
 #include <string_view>
 
@@ -19,7 +18,7 @@ class GameWindow;
  * @brief Manages all font state and rendering, acting as the buffer between the
  * font library and the rest of the program
  */
-class FontWoes final
+class TextService final
 {
 public:
     /**
@@ -32,15 +31,15 @@ public:
         UiSmall,
     };
 
-    FontWoes(GameWindow& window);
-    ~FontWoes();
+    TextService(GameWindow& win, std::string_view const font_path);
+    ~TextService();
 
     /**
      * @brief Renders the given string at the given screen coordinates
      * @param len 0 for null-terminated strings
      */
     void render_string(std::string_view string,
-                       size_t const len,
+                       int const len,
                        float const x,
                        float const y,
                        SDL_Color const& color) const;
@@ -57,7 +56,7 @@ public:
      * @param other_color The color to use for all the other indicators
      */
     void highlight_keybind_indicator(std::string_view string,
-                                     size_t const index,
+                                     int const index,
                                      float const x,
                                      float const y,
                                      bool const hovered,
@@ -78,8 +77,8 @@ public:
      * @param font The font to use for measurement
      * @return Width and height, in pixels
      */
-    std::tuple<size_t, size_t>
-    font_dimensions(std::string_view string, Font font);
+    std::pair<int, int>
+    string_dimensions(std::string_view const string, Font font);
 
     /**
      * @brief Measures the dimensions that the given collection of strings
@@ -94,14 +93,14 @@ public:
      * @return Width and height, in pixels (the width is the width of the
      * longest string in the collection
      */
-    std::tuple<size_t, size_t>
-    font_dimensions(std::vector<std::string_view>& strings, Font font);
+    std::pair<int, int>
+    string_dimensions(std::vector<std::string_view> const& strings, Font font);
 
     /**
-     * @brief Prints the given FPS value at a corner of the screen in the given
-     * color
+     * @brief Renders the given FPS value in the given color at a corner of the
+     * screen
      */
-    void show_fps(float const fps, SDL_Color const& color) const;
+    void render_fps(float const fps, SDL_Color const& color) const;
 
     TTF_Font* ui_font;
     TTF_Font* ui_font_small;
@@ -112,7 +111,7 @@ private:
      */
     TTF_Font* resolve_font(Font const font) const;
 
-    GameWindow& window;
+    GameWindow& win;
 };
 
 }

@@ -1,42 +1,43 @@
 #ifndef PLAYSTAGE_HPP
 #define PLAYSTAGE_HPP
 
-#include <SDL3/SDL_events.h>
-#include <SDL3/SDL_rect.h>
+#include "GameWindow.hpp"
+#include "Grid.hpp"
+#include "Entities.hpp"
 
+#include <random>
+
+union SDL_Event;
 struct SDL_Texture;
+struct SDL_Renderer;
 
 namespace vw
 {
 
-class GameWindow;
-class FontWoes;
-
+/**
+ * @brief Manages the tiles and entities where all the action happens
+ */
 class PlayStage final
 {
+
 public:
-    PlayStage(GameWindow& window,
-              FontWoes& font_manager);
-    ~PlayStage();
+    PlayStage(GameWindow& win,
+              std::string_view const floor_spritesheet_path,
+              std::string_view const entity_spritesheet_path);
 
-    void process_input(SDL_Event* e);
+    void process_input(SDL_Event const* e);
 
-    void update(void);
+    void update();
 
-    void render(void);
+    void render();
 
 private:
-    void try_moving_to(float const x, float const y);
+    GameWindow& win;
 
-    GameWindow& window;
-    FontWoes& font_manager;
-    SDL_Texture* player_sprite;
-    SDL_Texture* floor_sprite;
-    SDL_FPoint player_pos;
-    bool going_up;
-    bool going_down;
-    bool going_left;
-    bool going_right;
+    std::mt19937 rng;
+
+    Grid grid;
+    Entities entities;
 };
 
 }
